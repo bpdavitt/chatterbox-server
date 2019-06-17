@@ -7,9 +7,11 @@ const app = express();
 const URL = require('url').parse;
 const _ = require('lodash');
 const fs = require('fs');
+const cors = require('cors');
 
 app.use('/public', express.static(path.join(__dirname, '../public')));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(cors());
 
 
 var port = 3000;
@@ -19,6 +21,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/classes/messages', (req, res) => {
+
   fs.readFile(path.join(__dirname, 'storage.json'), 'utf-8', (err, data) => {
     let messages = JSON.parse(data);
     const results = _.sortBy(messages.results, ['createdAt']).reverse();
@@ -36,12 +39,12 @@ app.post('/classes/messages', (req, res) => {
     messages.results.push(newMessage);
     const writeData = JSON.stringify(messages);
     fs.writeFile(path.join(__dirname, 'storage.json'), writeData, 'utf-8', (err) => {
-      if(err) console.log(error);
-      res.send(JSON.stringify({message: "message posted!"}));
-    })
+      if (err) { console.log(error); }
+      res.send(JSON.stringify({message: 'message posted!'}));
+    });
   });
   
   
 });
 
-app.listen(port, () => console.log(`Chattebox app listening on port ${port}!`))
+app.listen(port, () => console.log(`Chattebox app listening on port ${port}!`));
